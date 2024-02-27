@@ -407,6 +407,7 @@ global.reloadHandler = async function (restatConn) {
 };
 
 global.plugins = {};
+const pluginFolder = join(__dirname, './plugins')
 const pluginFilter = (filename) => /\.js$/.test(filename);
 
 async function filesInit() {
@@ -436,77 +437,47 @@ async function filesInit() {
 filesInit()
   .then((_) => console.log(Object.keys(global.plugins)))
   .catch(console.error);
-
-function FileEv(type, file) {
-  const filename = async (file) => file.replace(/^.*[\\\/]/, "");
-  console.log(file);
-  switch (type) {
-    case "delete":
-      return delete global.plugins[file];
-      break;
-    case "change":
-      try {
-        (async () => {
-          const module = await import(
-            `${global.__filename(file)}?update=${Date.now()}`
-          );
-          global.plugins[file] = module.default || module;
-        })();
-      } catch (e) {
-        conn.logger.error(
-          `error require plugin '${filename(file)}\n${format(e)}'`,
-        );
-      } finally {
-        global.plugins = Object.fromEntries(
-          Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b)),
-        );
+ 
+global.reload = async (_ev, filename) => {
+  if (pluginFilter(filename)) {
+    let dir = global.__filename(join(pluginFolder, filename), true)
+    if (filename in global.plugins) {
+      if (existsSync(dir)) conn.logger.info(`re - require plugin '${filename}'`)
+      else { 
+        conn.logger.warn(`deleted plugin '${filename}'`)
+        return delete global.plugins[filename]
       }
-      break;
-    case "add":
-      try {
-        (async () => {
-          const module = await import(
-            `${global.__filename(file)}?update=${Date.now()}`
-          );
-          global.plugins[file] = module.default || module;
-        })();
-      } catch (e) {
-        conn.logger.error(
-          `error require plugin '${filename(file)}\n${format(e)}'`,
-        );
-      } finally {
-        global.plugins = Object.fromEntries(
-          Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b)),
-        );
-      }
-      break;
+    } else conn.logger.info(`requiring new plugin '${filename}'`)
+    let err = syntaxerror(readFileSync(dir), filename, {
+      sourceType: 'module',
+      allowAwaitOutsideFunction: true
+    })
+    if (err) conn.logger.error(`syntax error while loading '${filename}'\n${format(err)}`)
+    else try {
+      const module = (await import(`${global.__filename(dir)}?update=${Date.now()}`))
+      global.plugins[filename] = module.default || module
+    } catch (e) {
+      conn.logger.error(`error require plugin '${filename}\n${format(e)}'`)
+    } finally {
+      global.plugins = Object.fromEntries(Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b)))
+    }
   }
 }
-
-function watchFiles() {
-  let watcher = chokidar.watch("plugins/**/*.js", {
-    ignored: /(^|[\/\\])\../,
-    persistent: true,
-    ignoreInitial: true,
-    alwaysState: true,
-  });
-  const pluginFilter = (filename) => /\.js$/.test(filename);
-  watcher
-    .on("add", (path) => {
-      conn.logger.info(`new plugin - '${path}'`);
-      return FileEv("add", `./${path}`);
-    })
-    .on("change", (path) => {
-      conn.logger.info(`updated plugin - '${path}'`);
-      return FileEv("change", `./${path}`);
-    })
-    .on("unlink", (path) => {
-      conn.logger.warn(`deleted plugin - '${path}'`);
-      return FileEv("delete", `./${path}`);
-    });
-}
-watchFiles();
+Object.freeze(global.reload)
+watch(pluginFolder, { recursive: true }, (_eventType, filename) => {
+	global.reload(null, filename);
+}); 
 await global.reloadHandler();
+
+function formatFilename(filename) {
+	let dir = join(__dirname, './')
+	// fix invalid regular expresion when run in windows
+	if (os.platform() === 'win32') dir = dir.replace(/\\/g, '\\\\')
+	// '^' mean only replace if starts with
+	const regex = new RegExp(`^${dir}`)
+	const formated = filename.replace(regex, '')
+	return formated
+}
 
 // Quick Test
 

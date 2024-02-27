@@ -46,27 +46,10 @@ _ɴᴏᴛᴇ: jika kamu tidak paham dengan fungsi dari *Kobokanaeru ᴍᴜʟᴛ�
         vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;a,;;;\nFN:${name}\nitem1.TEL;waid=${m.sender.split("@")[0]}:${m.sender.split("@")[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`,
       },
     },
-  };
-
-  let p = await new canvafy.Security()
-    .setAvatar("https://i.ibb.co/2WzLyGk/profile.jpg")
-    .setBackground("color", "#FF0033")
-    .setLocale("id")
-    .setOverlayOpacity(1.0)
-    .setAvatarBorder("#fff")
-    .setCreatedTimestamp(Date.now())
-    .setSuspectTimestamp(1)
-    .build();
-
-  conn.sendFile(
-    m.chat,
-    p,
-    "",
-    yaya,
-    m,
-    null,
-    {
-      fileLength: "10000",
+  };      
+  
+  conn.sendMessage(m.chat, {
+  	text: yaya,
       contextInfo: {
         externalAdReply: {
           showAdAttribution: true,

@@ -1,3 +1,4 @@
+import * as os from 'os'
 import { smsg } from "./lib/simple.js";
 import { format } from "util";
 import { fileURLToPath } from "url";
@@ -12,6 +13,8 @@ import fetch from "node-fetch";
  */
 const { proto } = (await import("@adiwajshing/baileys")).default;
 const isNumber = (x) => typeof x === "number" && !isNaN(x);
+const isLinux = (os.platform() === 'win32') ? false : true
+
 const delay = (ms) =>
   isNumber(ms) &&
   new Promise((resolve) =>
@@ -278,23 +281,25 @@ export async function handler(chatUpdate) {
                 : false;
 
         if (!isAccept) continue;
-        m.plugin = name;
-        if (
-          m.chat in global.db.data.chats ||
-          m.sender in global.db.data.users
-        ) {
-          let chat = global.db.data.chats[m.chat];
-          let user = global.db.data.users[m.sender];
-          if (
-            name != "owner-unbanchat.js" &&
-            name != "owner-exec.js" &&
-            name != "owner-exec2.js" &&
-            name != "tool-delete.js" &&
-            chat?.isBanned
-          )
-            return; // Except this
-          if (name != "owner-unbanuser.js" && user?.banned) return;
-        }
+        m.plugin = name
+        if (m.chat in global.db.data.chats || m.sender in global.db.data.users) {
+	let chat = global.db.data.chats[m.chat]
+	let user = global.db.data.users[m.sender]
+	if (
+		name != "/plugins/owner/unbanchat.js" &&
+		name != "/plugins/owner/exec.js" &&
+		name != "/plugins/owner/exec2.js" &&
+		name != "/plugins/owner/delete.js" &&
+		name != "/plugins/group/enable.js" &&
+		chat?.isBanned
+	)
+		return // Except this
+	if (name != "/plugins/owner/unbanuser.js" &&
+		name != "/plugins/owner/exec.js" &&
+		name != "/plugins/owner/exec2.js" &&
+		user?.banned)
+		return
+}
         if (plugin.rowner && plugin.owner && !(isROwner || isOwner)) {
           // Both Owner
           fail("owner", m, this);

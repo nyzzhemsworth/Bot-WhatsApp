@@ -1,95 +1,84 @@
-import fetch from 'node-fetch';
+import fetch from "node-fetch";
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-    text = text.endsWith('SMH') ? text.replace('SMH', '') : text;
-    if (!text) throw `Ex:\n${usedPrefix + command} https://id.pinterest.com/pin/29414203809412603/`;
-    const urls = text.match(/https?:\/\/[^\s]+/g);
-    
-    if (urls) {
-        for (const url of urls) {
-            const res = await pinterest(url);
-            
-            if (Array.isArray(res)) {
-                // Handle multiple URLs in the response
-                for (const item of res) {
-                    if (item.type === 'image' || item.type === 'gif' || item.type === 'video') {
-                        // Send media with caption using conn.sendFile
-                        await conn.sendFile(m.chat, item.url, '', `Succes Download: ${item.url}`, m);
-                    }
-                }
-            } else if (res && (res.type === 'image' || res.type === 'gif' || res.type === 'video')) {
-                // Send media with caption using conn.sendFile
-                await conn.sendFile(m.chat, res.url, '', `Succes Download: ${res.url}`, m);
-            } else {
-                // Handle other types or errors
-                throw 'huhft. :/';
-            }
+  text = text.endsWith("SMH") ? text.replace("SMH", "") : text;
+  if (!text)
+    throw `Ex:\n${usedPrefix + command} https://id.pinterest.com/pin/29414203809412603/`;
+  const urls = text.match(/https?:\/\/[^\s]+/g);
+
+  if (urls) {
+    for (const url of urls) {
+      const res = await pinterest(url);
+
+      if (Array.isArray(res)) {
+        // Handle multiple URLs in the response
+        for (const item of res) {
+          if (
+            item.type === "image" ||
+            item.type === "gif" ||
+            item.type === "video"
+          ) {
+            // Send media with caption using conn.sendFile
+            await conn.sendFile(
+              m.chat,
+              item.url,
+              "",
+              `Succes Download: ${item.url}`,
+              m,
+            );
+          }
         }
-    } else {
-        throw 'No valid Pinterest URLs found.';
+      } else if (
+        res &&
+        (res.type === "image" || res.type === "gif" || res.type === "video")
+      ) {
+        // Send media with caption using conn.sendFile
+        await conn.sendFile(
+          m.chat,
+          res.url,
+          "",
+          `Succes Download: ${res.url}`,
+          m,
+        );
+      } else {
+        // Handle other types or errors
+        throw "huhft. :/";
+      }
     }
+  } else {
+    throw "No valid Pinterest URLs found.";
+  }
 };
 
-handler.help = ['downloadpin <LinkPin(s)>'];
-handler.tags = ['downloader'];
+handler.help = ["downloadpin <LinkPin(s)>"];
+handler.tags = ["downloader"];
 handler.command = /^(downloadpin|downloadpinterest)$/i;
 
 export default handler;
 
 async function pinterest(query) {
-    if (query.match(/https?:\/\/[^\s]+/)) {
-        let res = await fetch(`https://tr.deployers.repl.co/pindownload?url=${query}`);
-        let text = await res.text();
-        let urls = extractUrlsFromText(text);
-        return urls;
-    }
+  if (query.match(/https?:\/\/[^\s]+/)) {
+    let res = await fetch(
+      `https://tr.deployers.repl.co/pindownload?url=${query}`,
+    );
+    let text = await res.text();
+    let urls = extractUrlsFromText(text);
+    return urls;
+  }
 }
 
 function extractUrlsFromText(text) {
-    const urls = [];
-    const matches = text.match(/"url":"(https?:\/\/[^"]+)"/g);
-    if (matches) {
-        for (const match of matches) {
-            const url = match.match(/"url":"(https?:\/\/[^"]+)"/)[1];
-            const type = url.match(/\.(jpg|jpeg|png|gif|mp4)$/i) ? 'image' : 'video'; // Adjust the file extensions as needed
-            urls.push({ type, url });
-        }
+  const urls = [];
+  const matches = text.match(/"url":"(https?:\/\/[^"]+)"/g);
+  if (matches) {
+    for (const match of matches) {
+      const url = match.match(/"url":"(https?:\/\/[^"]+)"/)[1];
+      const type = url.match(/\.(jpg|jpeg|png|gif|mp4)$/i) ? "image" : "video"; // Adjust the file extensions as needed
+      urls.push({ type, url });
     }
-    return urls;
+  }
+  return urls;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import cheerio from 'cheerio'
 // import fetch from 'node-fetch'
@@ -97,7 +86,7 @@ function extractUrlsFromText(text) {
 // import { URL_REGEX } from '@adiwajshing/baileys'
 
 // let handler = async (m, { conn, text, usedPrefix, command }) => {
-// 	text = text.endsWith('SMH') ? text.replace('SMH', '') : text 
+// 	text = text.endsWith('SMH') ? text.replace('SMH', '') : text
 // 	if (!text) throw 'Input Pinterest Url'
 // 	let res = await pinterest(text)
 // 	// if (!res) throw res

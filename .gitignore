@@ -5,6 +5,7 @@ tmp/
 .config
 package-lock.json
 /tmp/
+elaina_store.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/node,visualstudiocode,git,linux,windows,python,executable,replit,ssh
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,visualstudiocode,git,linux,windows,python,executable,replit,ssh

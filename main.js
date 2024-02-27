@@ -11,8 +11,11 @@
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 import "./config.js";
 
+import chokidar from 'chokidar';
+import os from "os";
 import { glob } from "glob";
 import path, { join } from "path";
+import fs from "fs";
 import { platform } from "process";
 import { fileURLToPath, pathToFileURL } from "url";
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
@@ -403,65 +406,107 @@ global.reloadHandler = async function (restatConn) {
   return true;
 };
 
-const pluginFolder = global.__dirname(join(__dirname, "./plugins"));
-const pluginFilter = filename => /\.js$/.test(filename)
-global.plugins = {}
-async function filesInit() {
-    const files = glob.sync(path.join(__dirname, "./plugins/**/*.js"))
 
-    for (let file of files) {
-        try {
-            const module = await import(file)
-            global.plugins[file] = module.default || module
-        } catch (e) {
-            conn.logger.error(e)
-            delete global.plugins[file]
-        }
-    }
+global.plugins = {};
+const pluginFilter = (filename) => /\.js$/.test(filename);
+
+async function filesInit() {
+try {
+const pluginsDirectory = path.join(__dirname, 'plugins');
+const pattern = path.join(pluginsDirectory, '**/*.js');
+const CommandsFiles = glob.sync(pattern);
+const successMessages = [];
+const errorMessages = [];
+
+for (let file of CommandsFiles) {
+const moduleName = '/' + path.relative(__dirname, file);
+try {
+const module = await import(file);
+global.plugins[moduleName] = module.default || module;
+successMessages.push(moduleName);
+} catch (e) {
+conn.logger.error(e);
+delete global.plugins[moduleName];
+}
+}
+} catch (e) {
+conn.logger.error(e);
+}
 }
 
 filesInit()
   .then((_) => console.log(Object.keys(global.plugins)))
   .catch(console.error);
 
-global.reload = async (_ev, filename) => {
-  if (pluginFilter(filename)) {
-    let dir = global.__filename(join(pluginFolder, filename), true);
-    if (filename in global.plugins) {
-      if (existsSync(dir))
-        conn.logger.info(`re - require plugin '${filename}'`);
-      else {
-        conn.logger.warn(`deleted plugin '${filename}'`);
-        return delete global.plugins[filename];
-      }
-    } else conn.logger.info(`requiring new plugin '${filename}'`);
-    let err = syntaxerror(readFileSync(dir), filename, {
-      sourceType: "module",
-      allowAwaitOutsideFunction: true,
-    });
-    if (err)
-      conn.logger.error(
-        `syntax error while loading '${filename}'\n${format(err)}`,
-      );
-    else
-      try {
-        const module = await import(
-          `${global.__filename(dir)}?update=${Date.now()}`
-        );
-        global.plugins[filename] = module.default || module;
-      } catch (e) {
-        conn.logger.error(`error require plugin '${filename}\n${format(e)}'`);
-      } finally {
-        global.plugins = Object.fromEntries(
-          Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b)),
-        );
-      }
-  }
-};
-Object.freeze(global.reload);
-watch(pluginFolder, { recursive: true }, (_eventType, filename) => {
-  global.reload(null, filename);
+function FileEv(type, file) {
+const filename = async (file) => file.replace(/^.*[\\\/]/, "");
+console.log(file);
+switch (type) {
+case "delete":
+return delete global.plugins[file];
+break;
+case "change":
+try {
+(async () => {
+const module = await import(
+    `${global.__filename(file)}?update=${Date.now()}`
+);
+global.plugins[file] = module.default || module;
+})();
+} catch (e) {
+conn.logger.error(
+`error require plugin '${filename(file)}\n${format(e)}'`
+);
+} finally {
+global.plugins = Object.fromEntries(
+Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b))
+);
+}
+break;
+case "add":
+try {
+(async () => {
+const module = await import(
+    `${global.__filename(file)}?update=${Date.now()}`
+);
+global.plugins[file] = module.default || module;
+})();
+} catch (e) {
+conn.logger.error(
+`error require plugin '${filename(file)}\n${format(e)}'`
+);
+} finally {
+global.plugins = Object.fromEntries(
+Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b))
+);
+}
+break;
+}
+}
+
+function watchFiles() {
+let watcher = chokidar.watch("plugins/**/*.js", {
+ignored: /(^|[\/\\])\../,
+persistent: true,
+ignoreInitial: true,
+alwaysState: true,
 });
+const pluginFilter = (filename) => /\.js$/.test(filename);
+watcher
+.on("add", (path) => {
+conn.logger.info(`new plugin - '${path}'`);
+return FileEv("add", `./${path}`);
+})
+.on("change", (path) => {
+conn.logger.info(`updated plugin - '${path}'`);
+return FileEv("change", `./${path}`);
+})
+.on("unlink", (path) => {
+conn.logger.warn(`deleted plugin - '${path}'`);
+return FileEv("delete", `./${path}`);
+});
+}
+watchFiles();
 await global.reloadHandler();
 
 // Quick Test
@@ -531,23 +576,6 @@ async function _quickTest() {
       "Fitur Stiker Mungkin Tidak Bekerja Tanpa imagemagick dan libwebp di ffmpeg belum terinstall (pkg install imagemagick)",
     );
   }
-}
-setInterval(async () => {
-  if (stopped == "close") return;
-  const status = global.db.data.settings[conn.user.jid] || {};
-  let _uptime = process.uptime() * 1000;
-  let uptime = clockString(_uptime);
-  let bio = `☔ Kobokanaeru ᴍᴜʟᴛɪᴅᴇᴠɪᴄᴇ Aktif : ${uptime} ┃ Script Update: ┃ 🔗 GH REXX HAYANASI: https://github.com/RexxyHouted`;
-  await conn.updateProfileStatus(bio).catch((_) => _);
-}, 60000);
-function clockString(ms) {
-  let d = isNaN(ms) ? "--" : Math.floor(ms / 86400000);
-  let h = isNaN(ms) ? "--" : Math.floor(ms / 3600000) % 24;
-  let m = isNaN(ms) ? "--" : Math.floor(ms / 60000) % 60;
-  let s = isNaN(ms) ? "--" : Math.floor(ms / 1000) % 60;
-  return [d, " Hari ", h, " Jam ", m, " Menit ", s, " Seconds "]
-    .map((v) => v.toString().padStart(2, 0))
-    .join("");
 }
 
 _quickTest()

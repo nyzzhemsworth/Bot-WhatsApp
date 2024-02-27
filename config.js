@@ -22,13 +22,13 @@ let date = d.toLocaleDateString(locale, {
 });
 
 /*============== SOCIAL ==============*/
-global.sig = "https://instagram.com/rexxtheproject"; //instagram
-global.sgh = "https://github.com/RexxyHouted"; //github
-global.sgc = "https://chat.whatsapp.com/FhZ2oueAcLK5GqZu0nfKq6"; //group whatsapp
+global.sig = "https://instagram.com/@arifzxa19"; //instagram
+global.sgh = "https://github.com/Arifzyn19"; //github
+global.sgc = "https://chat.whatsapp.com/Hd1rHf8Fxq65FiPZE2B2NP"; //group whatsapp
 global.saluran = "https://whatsapp.com/channel/0029VaPvn7DAInPeoypHqm45"; //saluran whatsapp
-global.syt = "https://www.youtube.com/@RexxyMD"; //youtube
-global.swa = "https://wa.me/6285726044843"; //whatsapp
-global.tele = "https://t.me/RexxHayanasi"; //telegram
+global.syt = "https://www.youtube.com/@arifzxa19"; //youtube
+global.swa = "https://wa.me/6288213503541"; //whatsapp
+global.tele = "https://t.me/arifzxa19"; //telegram
 global.sdc = "-"; //discord
 global.snh = "https://nhentai.net/HaramNgentod"; //nhentai
 
@@ -42,29 +42,27 @@ global.sid = "https://s.id/RexxETC"; //s.id
 global.psaweria = "-"; //saweria
 
 /*============== NOMOR ==============*/
-global.nomorwa = "6288213503541"; //whatsapp
-global.nomorbot = "6285280565984"; //nomor Bot
-global.nomorown = "6288213503541"; //nomor Owner
-global.namebot = "Kobokanaeru ᴍᴜʟᴛɪᴅᴇᴠɪᴄᴇ"; //nama Bot
-global.nameown = "Arifzyn"; //nama Owner
+global.nomorwa = "6288213503541"; 
+global.nomorbot = "6285280565984"; 
+global.nomorown = "6288213503541"; 
+global.namebot = "Kobokanaeru ᴍᴜʟᴛɪᴅᴇᴠɪᴄᴇ"; 
+global.nameown = "Arifzyn"; 
 
 /*============== STAFF ==============*/
 global.owner = [
-  ["6288213503541", "Arifzyn", true], //creator/owner
-]; //put your number here
-global.mods = []; //moderator
-global.prems = []; //prem bukan disini
+  ["6288213503541", "Arifzyn", true],
+  ["6285691464024", "Arifzyn", true]
+]; 
+
+global.mods = []; 
+global.prems = []; 
 
 /*============== API ==============*/
 global.APIs = {
-  // API Prefix
-  // name: 'https://website'
   arifzyn: "https://api.arifzyn.tech"
 };
 
 global.APIKeys = {
-  // APIKey Here
-  // 'https://website': 'apikey'
   "https://api.arifzyn.tech": "AR-ArifzynKey"
 };
 

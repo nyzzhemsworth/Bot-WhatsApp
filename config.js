@@ -42,28 +42,28 @@ global.sid = "https://s.id/RexxETC"; //s.id
 global.psaweria = "-"; //saweria
 
 /*============== NOMOR ==============*/
-global.nomorwa = "6288213503541"; 
-global.nomorbot = "6285280565984"; 
-global.nomorown = "6288213503541"; 
-global.namebot = "Kobokanaeru ᴍᴜʟᴛɪᴅᴇᴠɪᴄᴇ"; 
-global.nameown = "Arifzyn"; 
+global.nomorwa = "6288213503541";
+global.nomorbot = "6285280565984";
+global.nomorown = "6288213503541";
+global.namebot = "Kobokanaeru ᴍᴜʟᴛɪᴅᴇᴠɪᴄᴇ";
+global.nameown = "Arifzyn";
 
 /*============== STAFF ==============*/
 global.owner = [
   ["6288213503541", "Arifzyn", true],
-  ["6285691464024", "Arifzyn", true]
-]; 
+  ["6285691464024", "Arifzyn", true],
+];
 
-global.mods = []; 
-global.prems = []; 
+global.mods = [];
+global.prems = [];
 
 /*============== API ==============*/
 global.APIs = {
-  arifzyn: "https://api.arifzyn.tech"
+  arifzyn: "https://api.arifzyn.tech",
 };
 
 global.APIKeys = {
-  "https://api.arifzyn.tech": "AR-ArifzynKey"
+  "https://api.arifzyn.tech": "AR-ArifzynKey",
 };
 
 /*============== VERSION ==============*/
@@ -100,16 +100,16 @@ global.dpdf = "application/pdf";
 global.drtf = "text/rtf";
 global.djson = "application/json";
 
-global.thumb = 'https://telegra.ph/file/04c4d43e78ee86c40a31e.jpg'
+global.thumb = "https://telegra.ph/file/04c4d43e78ee86c40a31e.jpg";
 global.thumbdoc = "https://telegra.ph/file/6e45318d7c76f57e4a8bd.jpg";
 global.flaaa = [
-'https://www6.flamingtext.com/net-fu/proxy_form.cgi?&imageoutput=true&script=sketch-name&doScale=true&scaleWidth=800&scaleHeight=500&fontsize=100&fillTextType=1&fillTextPattern=Warning!&text=', 
-'https://flamingtext.com/net-fu/proxy_form.cgi?&imageoutput=true&script=water-logo&script=water-logo&fontsize=90&doScale=true&scaleWidth=800&scaleHeight=500&fontsize=100&fillTextColor=%23000&shadowGlowColor=%23000&backgroundColor=%23000&text=',
-'https://flamingtext.com/net-fu/proxy_form.cgi?&imageoutput=true&script=crafts-logo&fontsize=90&doScale=true&scaleWidth=800&scaleHeight=500&text=',
-'https://flamingtext.com/net-fu/proxy_form.cgi?&imageoutput=true&script=amped-logo&doScale=true&scaleWidth=800&scaleHeight=500&text=',
-'https://www6.flamingtext.com/net-fu/proxy_form.cgi?&imageoutput=true&script=sketch-name&doScale=true&scaleWidth=800&scaleHeight=500&fontsize=100&fillTextType=1&fillTextPattern=Warning!&text=',
-'https://www6.flamingtext.com/net-fu/proxy_form.cgi?&imageoutput=true&script=sketch-name&doScale=true&scaleWidth=800&scaleHeight=500&fontsize=100&fillTextType=1&fillTextPattern=Warning!&fillColor1Color=%23f2aa4c&fillColor2Color=%23f2aa4c&fillColor3Color=%23f2aa4c&fillColor4Color=%23f2aa4c&fillColor5Color=%23f2aa4c&fillColor6Color=%23f2aa4c&fillColor7Color=%23f2aa4c&fillColor8Color=%23f2aa4c&fillColor9Color=%23f2aa4c&fillColor10Color=%23f2aa4c&fillOutlineColor=%23f2aa4c&fillOutline2Color=%23f2aa4c&backgroundColor=%23101820&text='] 
-
+  "https://www6.flamingtext.com/net-fu/proxy_form.cgi?&imageoutput=true&script=sketch-name&doScale=true&scaleWidth=800&scaleHeight=500&fontsize=100&fillTextType=1&fillTextPattern=Warning!&text=",
+  "https://flamingtext.com/net-fu/proxy_form.cgi?&imageoutput=true&script=water-logo&script=water-logo&fontsize=90&doScale=true&scaleWidth=800&scaleHeight=500&fontsize=100&fillTextColor=%23000&shadowGlowColor=%23000&backgroundColor=%23000&text=",
+  "https://flamingtext.com/net-fu/proxy_form.cgi?&imageoutput=true&script=crafts-logo&fontsize=90&doScale=true&scaleWidth=800&scaleHeight=500&text=",
+  "https://flamingtext.com/net-fu/proxy_form.cgi?&imageoutput=true&script=amped-logo&doScale=true&scaleWidth=800&scaleHeight=500&text=",
+  "https://www6.flamingtext.com/net-fu/proxy_form.cgi?&imageoutput=true&script=sketch-name&doScale=true&scaleWidth=800&scaleHeight=500&fontsize=100&fillTextType=1&fillTextPattern=Warning!&text=",
+  "https://www6.flamingtext.com/net-fu/proxy_form.cgi?&imageoutput=true&script=sketch-name&doScale=true&scaleWidth=800&scaleHeight=500&fontsize=100&fillTextType=1&fillTextPattern=Warning!&fillColor1Color=%23f2aa4c&fillColor2Color=%23f2aa4c&fillColor3Color=%23f2aa4c&fillColor4Color=%23f2aa4c&fillColor5Color=%23f2aa4c&fillColor6Color=%23f2aa4c&fillColor7Color=%23f2aa4c&fillColor8Color=%23f2aa4c&fillColor9Color=%23f2aa4c&fillColor10Color=%23f2aa4c&fillOutlineColor=%23f2aa4c&fillOutline2Color=%23f2aa4c&backgroundColor=%23101820&text=",
+];
 
 /*=========== FAKE SIZE ===========*/
 global.fsizedoc = "99999999999999"; // default 10TB

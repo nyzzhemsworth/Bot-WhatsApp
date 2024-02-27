@@ -11,7 +11,7 @@
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 import "./config.js";
 
-import chokidar from 'chokidar';
+import chokidar from "chokidar";
 import os from "os";
 import { glob } from "glob";
 import path, { join } from "path";
@@ -26,7 +26,7 @@ global.__filename = function filename(
   return rmPrefix
     ? /file:\/\/\//.test(pathURL)
       ? fileURLToPath(pathURL)
-      : pathURL 
+      : pathURL
     : pathToFileURL(pathURL).toString();
 };
 global.__dirname = function dirname(pathURL) {
@@ -406,32 +406,31 @@ global.reloadHandler = async function (restatConn) {
   return true;
 };
 
-
 global.plugins = {};
 const pluginFilter = (filename) => /\.js$/.test(filename);
 
 async function filesInit() {
-try {
-const pluginsDirectory = path.join(__dirname, 'plugins');
-const pattern = path.join(pluginsDirectory, '**/*.js');
-const CommandsFiles = glob.sync(pattern);
-const successMessages = [];
-const errorMessages = [];
+  try {
+    const pluginsDirectory = path.join(__dirname, "plugins");
+    const pattern = path.join(pluginsDirectory, "**/*.js");
+    const CommandsFiles = glob.sync(pattern);
+    const successMessages = [];
+    const errorMessages = [];
 
-for (let file of CommandsFiles) {
-const moduleName = '/' + path.relative(__dirname, file);
-try {
-const module = await import(file);
-global.plugins[moduleName] = module.default || module;
-successMessages.push(moduleName);
-} catch (e) {
-conn.logger.error(e);
-delete global.plugins[moduleName];
-}
-}
-} catch (e) {
-conn.logger.error(e);
-}
+    for (let file of CommandsFiles) {
+      const moduleName = "/" + path.relative(__dirname, file);
+      try {
+        const module = await import(file);
+        global.plugins[moduleName] = module.default || module;
+        successMessages.push(moduleName);
+      } catch (e) {
+        conn.logger.error(e);
+        delete global.plugins[moduleName];
+      }
+    }
+  } catch (e) {
+    conn.logger.error(e);
+  }
 }
 
 filesInit()
@@ -439,72 +438,72 @@ filesInit()
   .catch(console.error);
 
 function FileEv(type, file) {
-const filename = async (file) => file.replace(/^.*[\\\/]/, "");
-console.log(file);
-switch (type) {
-case "delete":
-return delete global.plugins[file];
-break;
-case "change":
-try {
-(async () => {
-const module = await import(
-    `${global.__filename(file)}?update=${Date.now()}`
-);
-global.plugins[file] = module.default || module;
-})();
-} catch (e) {
-conn.logger.error(
-`error require plugin '${filename(file)}\n${format(e)}'`
-);
-} finally {
-global.plugins = Object.fromEntries(
-Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b))
-);
-}
-break;
-case "add":
-try {
-(async () => {
-const module = await import(
-    `${global.__filename(file)}?update=${Date.now()}`
-);
-global.plugins[file] = module.default || module;
-})();
-} catch (e) {
-conn.logger.error(
-`error require plugin '${filename(file)}\n${format(e)}'`
-);
-} finally {
-global.plugins = Object.fromEntries(
-Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b))
-);
-}
-break;
-}
+  const filename = async (file) => file.replace(/^.*[\\\/]/, "");
+  console.log(file);
+  switch (type) {
+    case "delete":
+      return delete global.plugins[file];
+      break;
+    case "change":
+      try {
+        (async () => {
+          const module = await import(
+            `${global.__filename(file)}?update=${Date.now()}`
+          );
+          global.plugins[file] = module.default || module;
+        })();
+      } catch (e) {
+        conn.logger.error(
+          `error require plugin '${filename(file)}\n${format(e)}'`,
+        );
+      } finally {
+        global.plugins = Object.fromEntries(
+          Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b)),
+        );
+      }
+      break;
+    case "add":
+      try {
+        (async () => {
+          const module = await import(
+            `${global.__filename(file)}?update=${Date.now()}`
+          );
+          global.plugins[file] = module.default || module;
+        })();
+      } catch (e) {
+        conn.logger.error(
+          `error require plugin '${filename(file)}\n${format(e)}'`,
+        );
+      } finally {
+        global.plugins = Object.fromEntries(
+          Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b)),
+        );
+      }
+      break;
+  }
 }
 
 function watchFiles() {
-let watcher = chokidar.watch("plugins/**/*.js", {
-ignored: /(^|[\/\\])\../,
-persistent: true,
-ignoreInitial: true,
-alwaysState: true,
-});
-const pluginFilter = (filename) => /\.js$/.test(filename);
-watcher
-.on("add", (path) => {
-conn.logger.info(`new plugin - '${path}'`);
-return FileEv("add", `./${path}`);
-})
-.on("change", (path) => {
-conn.logger.info(`updated plugin - '${path}'`);
-return FileEv("change", `./${path}`);
-})
-.on("unlink", (path) => {
-conn.logger.warn(`deleted plugin - '${path}'`);
-return FileEv("delete", `./${path}`);
-});
+  let watcher = chokidar.watch("plugins/**/*.js", {
+    ignored: /(^|[\/\\])\../,
+    persistent: true,
+    ignoreInitial: true,
+    alwaysState: true,
+  });
+  const pluginFilter = (filename) => /\.js$/.test(filename);
+  watcher
+    .on("add", (path) => {
+      conn.logger.info(`new plugin - '${path}'`);
+      return FileEv("add", `./${path}`);
+    })
+    .on("change", (path) => {
+      conn.logger.info(`updated plugin - '${path}'`);
+      return FileEv("change", `./${path}`);
+    })
+    .on("unlink", (path) => {
+      conn.logger.warn(`deleted plugin - '${path}'`);
+      return FileEv("delete", `./${path}`);
+    });
 }
 watchFiles();
 await global.reloadHandler();

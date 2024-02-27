@@ -10,7 +10,6 @@ const { generateWAMessageFromContent, proto } = (
 ).default;
 
 let handler = async (m, { conn, usedPrefix: _p, args, command }) => {
-  
   const defaultMenu = {
     before:
       `Bokobokobokobo... Kobo Kanaeru at your service! Let me be your sun to shine your day! Ehe! hallowww %name 🍁.
@@ -40,16 +39,11 @@ Aku、adalah、Kobokanaeru、Multidevice yang awal perilisan oleh owner Kobo Aka
     footer: "╰─── –",
     after: `Kobokanaeru - ᴍᴜʟᴛɪᴅᴇᴠɪᴄᴇ ʙʏ ${global.nameown} ${global.version}`,
   };
-  
-  let teks = `${args[0]}`.toLowerCase()
+
+  let teks = `${args[0]}`.toLowerCase();
   let tags;
-  let arrayMenu = [
-    "ai",
-    "download",
-    "group", 
-    "owner"
-  ]
-  
+  let arrayMenu = ["ai", "download", "group", "owner"];
+
   if (!arrayMenu.includes(teks)) teks = "404";
   if (teks == "ai") {
     tags = {
@@ -63,12 +57,12 @@ Aku、adalah、Kobokanaeru、Multidevice yang awal perilisan oleh owner Kobo Aka
     tags = {
       group: "*Group Feature*",
     };
-  } else if (teks == "owner") { 
+  } else if (teks == "owner") {
     tags = {
       owner: "*Owner Feature*",
     };
   }
-  
+
   try {
     let name = m.pushName || conn.getName(m.sender);
     let d = new Date(new Date() + 3600000);
@@ -100,13 +94,17 @@ Aku、adalah、Kobokanaeru、Multidevice yang awal perilisan oleh owner Kobo Aka
           setTimeout(resolve, 1000);
         })) * 1000;
     }
-    
+
     if (teks == "404") {
-      return conn.sendMessage(m.chat, { text: "Test" }, {
-        quoted: fkontak,
-        mentions: await conn.parseMention(conn),
-        contextInfo: { forwardingScore: 99999, isForwarded: true },
-      });
+      return conn.sendMessage(
+        m.chat,
+        { text: "Test" },
+        {
+          quoted: fkontak,
+          mentions: await conn.parseMention(conn),
+          contextInfo: { forwardingScore: 99999, isForwarded: true },
+        },
+      );
     }
 
     let bjir = "https://telegra.ph/file/7d021a0fb961c4dd68ddf.jpg";
@@ -235,24 +233,23 @@ function clockString(ms) {
   return [h, m, s].map((v) => v.toString().padStart(2, 0)).join(":");
 }
 
-function Styles (text, style = 1) {
-    var xStr = "abcdefghijklmnopqrstuvwxyz1234567890".split("");
-    var yStr = Object.freeze({
-      1: "ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘqʀꜱᴛᴜᴠᴡxʏᴢ1234567890",
-    });
-    var replacer = [];
-    xStr.map((v, i) =>
-      replacer.push({
-        original: v,
-        convert: yStr[style].split("")[i],
-      }),
-    );
-    var str = text.toLowerCase().split("");
-    var output = [];
-    str.map((v) => {
-      const find = replacer.find((x) => x.original == v);
-      find ? output.push(find.convert) : output.push(v);
-    });
-    return output.join("");
-  };
-  
+function Styles(text, style = 1) {
+  var xStr = "abcdefghijklmnopqrstuvwxyz1234567890".split("");
+  var yStr = Object.freeze({
+    1: "ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘqʀꜱᴛᴜᴠᴡxʏᴢ1234567890",
+  });
+  var replacer = [];
+  xStr.map((v, i) =>
+    replacer.push({
+      original: v,
+      convert: yStr[style].split("")[i],
+    }),
+  );
+  var str = text.toLowerCase().split("");
+  var output = [];
+  str.map((v) => {
+    const find = replacer.find((x) => x.original == v);
+    find ? output.push(find.convert) : output.push(v);
+  });
+  return output.join("");
+}

@@ -529,8 +529,7 @@ export async function participantsUpdate({ id, participants, action }) {
                     )
                 : chat.sBye || this.bye || conn.bye || "Bye, @user!"
             ).replace("@user", "@" + user.split("@")[0]);
-            //this.sendFile(id, pp, 'pp.jpg', text, null, false, { mentions: [user] })
-
+            
             this.sendMessage(id, {
               text: text,
               thumbnail: await (await this.getFile(pp)).data,
@@ -551,18 +550,7 @@ export async function participantsUpdate({ id, participants, action }) {
             });
           }
         }
-        this.relayMessage(
-          id,
-          {
-            text: text,
-            scheduledCallCreationMessage: {
-              callType: "AUDIO",
-              scheduledTimestampMs: 1200,
-              title: text,
-            },
-          },
-          {},
-        );
+        
       }
       break;
     case "promote":

@@ -11,7 +11,6 @@
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 import "./config.js";
 
-import chokidar from "chokidar";
 import os from "os";
 import { glob } from "glob";
 import path, { join } from "path";

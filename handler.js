@@ -289,18 +289,18 @@ export async function handler(chatUpdate) {
           let chat = global.db.data.chats[m.chat];
           let user = global.db.data.users[m.sender];
           if (
-            name != "/plugins/owner/unbanchat.js" &&
-            name != "/plugins/owner/exec.js" &&
-            name != "/plugins/owner/exec2.js" &&
-            name != "/plugins/owner/delete.js" &&
-            name != "/plugins/group/enable.js" &&
+            name != "unbanchat.js" &&
+            name != "exec.js" &&
+            name != "exec2.js" &&
+            name != "delete.js" &&
+            name != "enable.js" &&
             chat?.isBanned
           )
             return; // Except this
           if (
-            name != "/plugins/owner/unbanuser.js" &&
-            name != "/plugins/owner/exec.js" &&
-            name != "/plugins/owner/exec2.js" &&
+            name != "unbanuser.js" &&
+            name != "exec.js" &&
+            name != "exec2.js" &&
             user?.banned
           )
             return;
@@ -529,7 +529,7 @@ export async function participantsUpdate({ id, participants, action }) {
                     )
                 : chat.sBye || this.bye || conn.bye || "Bye, @user!"
             ).replace("@user", "@" + user.split("@")[0]);
-            
+
             this.sendMessage(id, {
               text: text,
               thumbnail: await (await this.getFile(pp)).data,
@@ -550,7 +550,6 @@ export async function participantsUpdate({ id, participants, action }) {
             });
           }
         }
-        
       }
       break;
     case "promote":

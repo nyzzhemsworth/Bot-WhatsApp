@@ -406,7 +406,7 @@ global.reloadHandler = async function (restatConn) {
 };
 
 global.plugins = {};
-const pluginFolder = join(__dirname, './plugins')
+const pluginFolder = join(__dirname, "./plugins");
 const pluginFilter = (filename) => /\.js$/.test(filename);
 
 async function filesInit() {
@@ -414,18 +414,15 @@ async function filesInit() {
     const pluginsDirectory = path.join(__dirname, "plugins");
     const pattern = path.join(pluginsDirectory, "**/*.js");
     const CommandsFiles = glob.sync(pattern);
-    const successMessages = [];
-    const errorMessages = [];
-
+    
     for (let file of CommandsFiles) {
-      const moduleName = "/" + path.relative(__dirname, file);
-      try {
+      const filename = path.basename(file)
+      try {	
         const module = await import(file);
-        global.plugins[moduleName] = module.default || module;
-        successMessages.push(moduleName);
+        global.plugins[filename] = module.default || module;
       } catch (e) {
         conn.logger.error(e);
-        delete global.plugins[moduleName];
+        delete global.plugins[filename];
       }
     }
   } catch (e) {
@@ -436,46 +433,56 @@ async function filesInit() {
 filesInit()
   .then((_) => console.log(Object.keys(global.plugins)))
   .catch(console.error);
- 
+
 global.reload = async (_ev, filename) => {
   if (pluginFilter(filename)) {
-    let dir = global.__filename(join(pluginFolder, filename), true)
+    let dir = global.__filename(join(pluginFolder, filename), true);
     if (filename in global.plugins) {
-      if (existsSync(dir)) conn.logger.info(`re - require plugin '${filename}'`)
-      else { 
-        conn.logger.warn(`deleted plugin '${filename}'`)
-        return delete global.plugins[filename]
+      if (existsSync(dir))
+        conn.logger.info(`re - require plugin '${filename}'`);
+      else {
+        conn.logger.warn(`deleted plugin '${filename}'`);
+        return delete global.plugins[filename];
       }
-    } else conn.logger.info(`requiring new plugin '${filename}'`)
+    } else conn.logger.info(`requiring new plugin '${filename}'`);
     let err = syntaxerror(readFileSync(dir), filename, {
-      sourceType: 'module',
-      allowAwaitOutsideFunction: true
-    })
-    if (err) conn.logger.error(`syntax error while loading '${filename}'\n${format(err)}`)
-    else try {
-      const module = (await import(`${global.__filename(dir)}?update=${Date.now()}`))
-      global.plugins[filename] = module.default || module
-    } catch (e) {
-      conn.logger.error(`error require plugin '${filename}\n${format(e)}'`)
-    } finally {
-      global.plugins = Object.fromEntries(Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b)))
-    }
+      sourceType: "module",
+      allowAwaitOutsideFunction: true,
+    });
+    if (err)
+      conn.logger.error(
+        `syntax error while loading '${filename}'\n${format(err)}`,
+      );
+    else
+      try {
+        console.log(global.__filename(dir))
+        const module = await import(
+          `${global.__filename(dir)}?update=${Date.now()}`
+        );
+        global.plugins[filename] = module.default || module;
+      } catch (e) {
+        conn.logger.error(`error require plugin '${filename}\n${format(e)}'`);
+      } finally {
+        global.plugins = Object.fromEntries(
+          Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b)),
+        );
+      }
   }
-}
-Object.freeze(global.reload)
+};
+Object.freeze(global.reload);
 watch(pluginFolder, { recursive: true }, (_eventType, filename) => {
-	global.reload(null, filename);
-}); 
+  global.reload(null, filename);
+});
 await global.reloadHandler();
 
 function formatFilename(filename) {
-	let dir = join(__dirname, './')
-	// fix invalid regular expresion when run in windows
-	if (os.platform() === 'win32') dir = dir.replace(/\\/g, '\\\\')
-	// '^' mean only replace if starts with
-	const regex = new RegExp(`^${dir}`)
-	const formated = filename.replace(regex, '')
-	return formated
+  let dir = join(__dirname, "./");
+  // fix invalid regular expresion when run in windows
+  if (os.platform() === "win32") dir = dir.replace(/\\/g, "\\\\");
+  // '^' mean only replace if starts with
+  const regex = new RegExp(`^${dir}`);
+  const formated = filename.replace(regex, "");
+  return formated;
 }
 
 // Quick Test
